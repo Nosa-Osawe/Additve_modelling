@@ -1,2 +1,2 @@
-# Additve_modelling
+# Additive_modelling
 GAM, GAMMs, PAMs etc
