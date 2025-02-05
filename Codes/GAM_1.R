@@ -172,9 +172,6 @@ smooth_interact <- gam(Sources ~ Season +
                        data = isit,
                        method = "REML")
 
-smooth_interact_tw <- gam(Sources ~ Season + s(SampleDepth, RelativeDepth, k = 60), 
-                          family = tw(link = "log"), 
-                          data = isit, method = "REML")
 
 summary(smooth_interact_tw)$p.table
 gam.check(smooth_interact_tw)
@@ -197,6 +194,7 @@ n_years <- length(nottem)/12
 # repeated for 20 years).
 nottem_month <- rep(1:12, times = n_years)
 
+
 # the year corresponding to each month in nottem_month
 nottem_year <- rep(1920:(1920 + n_years - 1), each = 12)
 
@@ -214,3 +212,5 @@ year_gam <- gam(nottem ~ s(nottem_year) +
 summary(year_gam)$s.table
 
 plot(year_gam, page = 1, scale = 0)
+
+plot(year_gam)
