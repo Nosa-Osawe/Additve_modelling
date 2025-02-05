@@ -213,4 +213,65 @@ summary(year_gam)$s.table
 
 plot(year_gam, page = 1, scale = 0)
 
-plot(year_gam)
+plot(year_gam, pages = 1, scale = 0)
+gam.check(year_gam)
+
+par(mfrow = c(1, 2))
+acf(resid(year_gam), lag.max = 36, main = "ACF")
+pacf(resid(year_gam), lag.max = 36, main = "pACF")
+
+# GAMM
+
+
+df <- data.frame(nottem, nottem_year, nottem_month)
+
+year_gam <- gamm(nottem ~ s(nottem_year) + 
+                   s(nottem_month, bs = "cc"),
+                 data = df)
+
+year_gam_AR1 <- gamm(nottem ~ s(nottem_year) + 
+                       s(nottem_month, bs = "cc"),
+                     correlation = corARMA(form = ~1 | nottem_year, p = 1),
+                     data = df)
+
+year_gam_AR2 <- gamm(nottem ~ s(nottem_year) + 
+                       s(nottem_month, bs = "cc"),
+                     correlation = corARMA(form = ~1 | nottem_year, p = 2), 
+                     data = df)
+
+AIC(year_gam$lme, year_gam_AR1$lme, year_gam_AR2$lme)
+
+#   GAMM with random intercercept
+
+# generate and view data
+gam_data2 <- gamSim(eg = 6)  # gamSim [mgcv] simulate example data for GAMs
+head(gam_data2)
+
+# run random intercept model
+gamm_intercept <- gam(y ~ s(x0) + s(fac, bs = "re"), 
+                      data = gam_data2,
+                      method = "REML")  # The random effect is 'fac', specified
+
+# examine model output
+summary(gamm_intercept)$s.table
+plot(gamm_intercept, select =2)
+# select = 2 because the random effect appears as the
+# second entry in the summary table.
+
+# ploting all levels of the random effect
+par(mfrow = c(1, 2), cex = 1.1)
+
+# Plot the summed effect of x0 (without random effects)
+plot_smooth(gamm_intercept, view = "x0", # X0 is a main effect
+            rm.ranef = TRUE, # Remove random effect
+            main = "intercept + s(x1)") # Title
+
+# Plot each level of the random effect
+plot_smooth(gamm_intercept, view = "x0", rm.ranef = FALSE, cond = list(fac = "1"),
+            main = "... + s(fac)", col = "orange", ylim = c(0, 25))
+plot_smooth(gamm_intercept, view = "x0", rm.ranef = FALSE, cond = list(fac = "2"),
+            add = TRUE, col = "red")
+plot_smooth(gamm_intercept, view = "x0", rm.ranef = FALSE, cond = list(fac = "3"),
+            add = TRUE, col = "purple")
+plot_smooth(gamm_intercept, view = "x0", rm.ranef = FALSE, cond = list(fac = "4"),
+            add = TRUE, col = "turquoise")
