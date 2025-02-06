@@ -90,3 +90,29 @@ plot(mod_city3, pages = 1)
 mod_city4 <- gam(city.mpg ~ s(weight) + s(length) + s(price) + s(rpm) + s(width),
                  data = mpg, method = "REML")
 
+summary(mod_city4)
+plot(mod_city4, page =1)
+
+###############################################################################
+
+#       VIsualizations
+mod <- gam(accel ~ s(times), data = mcycle, method = "REML")
+
+plot(mod, residuals = TRUE,pch =3, 
+     shade = TRUE, shade.col = "red" )
+
+mod <- gam(hw.mpg ~ s(weight) + s(rpm) + s(price) + comp.ratio, 
+           data = mpg, method = "REML")
+summary(mod)
+
+plot(mod, select = 3)
+plot(mod, pages = 1, all.terms = TRUE)
+
+# Plot the weight effect
+plot(mod, select = 1, shade = TRUE, shade.col = "hotpink")
+
+# Make another plot adding the intercept value and uncertainty
+plot(mod, select = 1, shade = TRUE, shade.col = "hotpink", 
+     shift = coef(mod)[1], seWithMean = TRUE)
+
+
