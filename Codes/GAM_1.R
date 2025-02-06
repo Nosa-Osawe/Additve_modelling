@@ -241,7 +241,7 @@ year_gam_AR2 <- gamm(nottem ~ s(nottem_year) +
 
 AIC(year_gam$lme, year_gam_AR1$lme, year_gam_AR2$lme)
 
-#   GAMM with random intercercept
+#   GAMM with random intercept
 
 # generate and view data
 gam_data2 <- gamSim(eg = 6)  # gamSim [mgcv] simulate example data for GAMs
@@ -275,3 +275,88 @@ plot_smooth(gamm_intercept, view = "x0", rm.ranef = FALSE, cond = list(fac = "3"
             add = TRUE, col = "purple")
 plot_smooth(gamm_intercept, view = "x0", rm.ranef = FALSE, cond = list(fac = "4"),
             add = TRUE, col = "turquoise")
+
+
+## GAMMS with Randon slopes
+
+gamm_slope <- gam(y ~ s(x0) + 
+                    s(x0, fac, bs = "re"), # Note the similarity with A GLMM random slope model
+                  data = gam_data2,
+                  method = "REML")
+
+summary(gamm_slope)$s.table
+
+par(mfrow = c(1, 2), cex = 1.1)
+
+# Plot the summed effect of x0 (without random effects)
+plot_smooth(gamm_slope, view = "x0", rm.ranef = TRUE, main = "intercept + s(x1)")
+
+# Plot each level of the random effect
+plot_smooth(gamm_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "1"),
+            main = "... + s(fac, x0)", col = "orange", ylim = c(0, 25))
+plot_smooth(gamm_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "2"),
+            add = TRUE, col = "red")
+plot_smooth(gamm_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "3"),
+            add = TRUE, col = "purple")
+plot_smooth(gamm_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "4"),
+            add = TRUE, col = "turquoise")
+
+## GAMMs with random slope-intercept
+
+gamm_int_slope <- gam(y ~ s(x0) +
+                        s(fac, bs = "re") +  #  Random slope
+                        s(fac, x0, bs = "re"), #  Random Intercept
+                      data = gam_data2, method = "REML" )
+
+summary(gamm_int_slope)$s.table
+
+
+
+par(mfrow = c(1, 2), cex = 1.1)
+
+# Plot the summed effect of x0 (without random effects)
+plot_smooth(gamm_int_slope, view = "x0", rm.ranef = TRUE, main = "intercept + s(x1)")
+
+# Plot each level of the random effect
+plot_smooth(gamm_int_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "1"),
+            main = "... + s(fac) + s(fac, x0)", col = "orange", ylim = c(0,
+                                                                         25))
+plot_smooth(gamm_int_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "2"),
+            add = TRUE, col = "red")
+plot_smooth(gamm_int_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "3"),
+            add = TRUE, col = "purple")
+plot_smooth(gamm_int_slope, view = "x0", rm.ranef = FALSE, cond = list(fac = "4"),
+            add = TRUE, col = "turquoise")
+
+plot(gamm_int_slope, select = 3)  # select 3 because its the third in the 
+                                  # summary s.table
+
+
+
+# GAMM with a random smooth
+gamm_smooth <- gam(y ~ s(x0) + 
+                     s(x0, fac, bs = "fs", m = 1),
+                   data = gam_data2, method = "REML")
+
+plot(gamm_smooth, select = 1)
+# select = 1 because the smooth slope appears as the first
+# entry in your summary table.
+
+par(mfrow = c(1, 2), cex = 1.1)
+
+# Plot the summed effect of x0 (without random effects)
+plot_smooth(gamm_smooth, view = "x0", rm.ranef = TRUE, main = "intercept + s(x1)")
+
+# Plot each level of the random effect
+plot_smooth(gamm_smooth, view = "x0", rm.ranef = FALSE, cond = list(fac = "1"),
+            main = "... + s(fac) + s(fac, x0)", col = "orange", ylim = c(0,
+                                                                         25))
+plot_smooth(gamm_smooth, view = "x0", rm.ranef = FALSE, cond = list(fac = "2"),
+            add = TRUE, col = "red")
+plot_smooth(gamm_smooth, view = "x0", rm.ranef = FALSE, cond = list(fac = "3"),
+            add = TRUE, col = "purple")
+plot_smooth(gamm_smooth, view = "x0", rm.ranef = FALSE, cond = list(fac = "4"),
+            add = TRUE, col = "turquoise")
+
+
+AIC(gamm_intercept, gamm_slope, gamm_int_slope, gamm_smooth)
