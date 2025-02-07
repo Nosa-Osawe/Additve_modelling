@@ -51,8 +51,7 @@ gam_mod_s2 <- gam(accel ~ s(times), data = mcycle, sp = 0.0001)
 par(mfrow = c(2, 1))
 plot(gam_mod_s1, residuals = TRUE, pch = 3)
 plot(gam_mod_s2, residuals = TRUE, pch = 3)
-
-install.packages("gamair")
+ 
 library(gamair)
 
 data("mpg", package="gamair")
@@ -115,4 +114,15 @@ plot(mod, select = 1, shade = TRUE, shade.col = "hotpink")
 plot(mod, select = 1, shade = TRUE, shade.col = "hotpink", 
      shift = coef(mod)[1], seWithMean = TRUE)
 
+
+# Model diagnostics using gam.check()
+
+set.seed(0)
+dat <- gamSim(1,n=200)
+
+mod <- gam(y ~ s(x0, k = 5) + s(x1, k = 5) + s(x2, k = 5) + s(x3, k = 5),
+           data = dat, method = "REML")
+gam.check(mod) 
+        #x2 does not have enough basis functions because it has a significant result 
+        # in the diagnostic test.
 
