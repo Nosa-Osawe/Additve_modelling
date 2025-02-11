@@ -1,4 +1,5 @@
 require(mgcv)
+library(sp)
 
 mcycle <- MASS::mcycle
 
@@ -126,3 +127,15 @@ gam.check(mod)
         #x2 does not have enough basis functions because it has a significant result 
         # in the diagnostic test.
 
+concurvity(mod, full = FALSE)
+
+mod <- gam(hw.mpg ~ s(length) + s(width) + s(height) + s(weight),
+           data = mpg, method = "REML")
+
+# Check overall concurvity
+concurvity(mod, full = TRUE)
+concurvity(mod, full = FALSE)
+
+
+
+data(meuse, package="sp")
