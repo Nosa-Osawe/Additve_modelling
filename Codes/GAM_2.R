@@ -137,5 +137,70 @@ concurvity(mod, full = TRUE)
 concurvity(mod, full = FALSE)
 
 
+mod2d <- gam(cadmium ~ s(x, y), data = meuse, method = "REML")
 
-data(meuse, package="sp")
+summary(mod2d)
+coef(mod2d)
+
+mod2da <- gam(cadmium ~ s(x, y) + s(dist) + s(elev), 
+              data = meuse, method = "REML")
+summary(mod2da)
+
+plot(mod2d)
+
+
+# Contour plot
+
+plot(mod2da, pages = 1)
+# 3D surface plot
+plot(mod2da, scheme = 1, pages = 1)
+# Colored heat map
+plot(mod2da, scheme = 2, pages = 1)
+
+vis.gam(mod2d, view = c("x", "y"),
+        plot.type = "persp", se = 2, theta = 135)
+
+
+model4b <- gam(hw.mpg ~ s(weight, by = fuel) + fuel, data = mpg,
+               method = "REML")
+summary(model4b)
+
+model4c <- gam(hw.mpg ~ s(weight, fuel, bs = "fs"),
+               data = mpg,
+               method = "REML")
+summary(model4c)
+ 
+
+# Fit a model with separate smooths for each land-use level
+mod_sep <- gam(copper ~ s(dist, by = landuse) + landuse,
+               data = meuse, method = "REML")
+summary(mod_sep)
+
+
+# Fit a model with factor-smooth interaction
+mod_fs <- gam(copper ~ s(dist, landuse, bs = "fs"),
+              data = meuse, method = "REML")
+summary(mod_fs)
+
+plot(mod_sep, pages = 1)
+plot(mod_fs, pages = 1)
+
+mod <- gam(cadmium ~ s(x, y) + s(elev), 
+           data = meuse, method = "REML")
+summary(mod)
+
+
+tensor_mod <- gam(cadmium ~ te(x, y, elev), 
+                  data = meuse, method = "REML")
+
+# Summarize and plot
+summary(tensor_mod)
+plot(tensor_mod)
+
+tensor_mod2 <- gam(cadmium ~ s(x, y) + s(elev) + ti(x, y, elev), 
+                   data = meuse, method = "REML")
+
+# Summarize and plot
+summary(tensor_mod2)
+
+plot(tensor_mod2, pages = 1)
