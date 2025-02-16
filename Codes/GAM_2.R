@@ -204,3 +204,33 @@ tensor_mod2 <- gam(cadmium ~ s(x, y) + s(elev) + ti(x, y, elev),
 summary(tensor_mod2)
 
 plot(tensor_mod2, pages = 1)
+
+csale <- readRDS("C:\\Users\\DELL\\Documents\\Git in R\\Additve_modelling\\Data\\csale.rds")
+head(csale)
+
+set.seed(0)
+ 
+log_mod2 <- gam(purchase ~ s(n_acts) + s(bal_crdt_ratio) +
+                  s(avg_prem_balance) + s(retail_crdt_ratio) +
+                  s(avg_fin_balance)  + s(mortgage_age) + s(cred_limit),
+                data = csale,
+                family = binomial,
+                method = "REML")
+
+# Plot on the log-odds scale
+plot(log_mod2, pages = 1)
+
+
+log_mod2 <- gam(purchase ~ s(n_acts) + s(bal_crdt_ratio) +
+                  s(avg_prem_balance) + s(retail_crdt_ratio) +
+                  s(avg_fin_balance)  + s(mortgage_age) + s(cred_limit),
+                data = csale,
+                family = binomial,
+                method = "REML")
+
+# Plot on the probability scale
+plot(log_mod2, pages = 1, trans = plogis)
+
+plot(log_mod2, pages = 1, trans = plogis,
+     shift = coef(log_mod2)[1])
+
